@@ -5,7 +5,8 @@
     "description": "Permissionless Prediction Markets with Stealth Sentiment",
     "main": "index.js",
     "scripts": {
-        "test": "anchor test"
+        "test": "anchor test",
+        "test:devnet": "anchor test --skip-deploy --skip-local-validator"
     },
     "dependencies": {
         "@coral-xyz/anchor": "^0.30.1",

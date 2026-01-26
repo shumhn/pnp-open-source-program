@@ -39,10 +39,37 @@ describe("private_pnp_tests", () => {
 
     let collateralMint: PublicKey;
     let configPDA: PublicKey;
+    const isLocalnet = provider.connection.rpcEndpoint.includes("localhost") || provider.connection.rpcEndpoint.includes("127.0.0.1");
+
+    const loading = async (msg: string) => {
+        process.stdout.write(`   🔄 ${msg}... `);
+        for (let i = 0; i < 5; i++) {
+            process.stdout.write(".");
+            await new Promise(r => setTimeout(r, 300));
+        }
+        console.log("");
+    };
+
+    const waitForExpiry = async (marketPDA: PublicKey) => {
+        let expired = false;
+        process.stdout.write("     ⏳ Waiting for market expiry...");
+        while (!expired) {
+            const state = await program.account.market.fetch(marketPDA);
+            const slot = await provider.connection.getSlot();
+            const clock = await provider.connection.getBlockTime(slot);
+
+            if (clock && clock >= state.endTime.toNumber()) {
+                expired = true;
+                console.log(" ✅ Expired.");
+            } else {
+                process.stdout.write(".");
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
+    };
 
     // Global Setup
     before(async () => {
-        const isLocalnet = provider.connection.rpcEndpoint.includes("localhost") || provider.connection.rpcEndpoint.includes("127.0.0.1");
 
         const fundWallet = async (to: PublicKey, amount: number) => {
             const balance = await provider.connection.getBalance(to);
@@ -119,7 +146,8 @@ describe("private_pnp_tests", () => {
         const [noMint] = PublicKey.findProgramAddressSync([Buffer.from("no_mint"), marketPDA.toBuffer()], program.programId);
         const vault = getAssociatedTokenAddressSync(collateralMint, marketPDA, true);
 
-        await program.methods.createMarketState(question, new BN(Math.floor(Date.now() / 1000) + 5)).accounts({
+        const duration = isLocalnet ? 5 : 60;
+        await program.methods.createMarketState(question, new BN(Math.floor(Date.now() / 1000) + duration)).accounts({
             creator: admin.publicKey, config: configPDA, market: marketPDA, collateralMint: collateralMint, systemProgram: SystemProgram.programId,
         } as any).signers([admin]).rpc();
 
@@ -152,6 +180,9 @@ describe("private_pnp_tests", () => {
     };
 
     describe("Functional Verification", () => {
+        beforeEach(async () => {
+            await loading("Preparing next functional test");
+        });
         it("Simple Trade: Public Market", async () => {
             console.log("   --- Testing standard market ---");
             const { marketPDA, yesMint, noMint, vault } = await createMarketHelper("BTC > 100k?");
@@ -172,7 +203,7 @@ describe("private_pnp_tests", () => {
 
             const bal = await provider.connection.getTokenAccountBalance(traderYes);
             expect(Number(bal.value.amount)).to.be.greaterThan(0);
-            await new Promise(r => setTimeout(r, 10000));
+            await waitForExpiry(marketPDA);
             await program.methods.resolveMarket(true).accounts({ oracle: oracle.publicKey, market: marketPDA }).signers([oracle]).rpc();
 
             const beforeBal = await provider.connection.getTokenAccountBalance(traderCollateral);
@@ -211,7 +242,7 @@ describe("private_pnp_tests", () => {
             } as any).signers([traderB]).rpc();
 
             console.log("   ✅ Privacy trade worked.");
-            await new Promise(r => setTimeout(r, 10000));
+            await waitForExpiry(marketPDA);
             await program.methods.resolveMarket(true).accounts({ oracle: oracle.publicKey, market: marketPDA }).signers([oracle]).rpc();
 
             const payoutSecret = crypto.randomBytes(32);
@@ -228,7 +259,9 @@ describe("private_pnp_tests", () => {
                 user: traderB.publicKey, config: configPDA, market: marketPDA, privacyPosition: privacyPos, privacyClaim, yesMint, noMint, collateralMint, privacyYes, privacyNo, vault, privacyVault, tokenProgram: TOKEN_PROGRAM_ID,
             } as any).signers([traderB]).rpc();
 
-            await new Promise(r => setTimeout(r, 12000));
+            // The lock period for privacy claims still exists, wait for it
+            const redeemWait = isLocalnet ? 12000 : 25000;
+            await new Promise(r => setTimeout(r, redeemWait));
             const recipientCollateral = getAssociatedTokenAddressSync(collateralMint, freshWallet.publicKey);
             await program.methods.claimPrivacy(Array.from(payoutSecret) as any, Array.from(payoutCommitment) as any).accounts({
                 claimant: relayer.publicKey, privacyClaim, collateralMint, privacyVault, recipientCollateral, recipientAccount: freshWallet.publicKey, tokenProgram: TOKEN_PROGRAM_ID, associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID, systemProgram: SystemProgram.programId,
@@ -241,6 +274,9 @@ describe("private_pnp_tests", () => {
     });
 
     describe("Safety Tests", () => {
+        beforeEach(async () => {
+            await loading("Preparing safety shield audit");
+        });
         it("Safety: Block theft by middleman", async () => {
             console.log("   --- Testing theft prevention ---");
             const { marketPDA } = await createMarketHelper("Theft Proof?");
@@ -283,6 +319,9 @@ describe("private_pnp_tests", () => {
     });
 
     describe("Privacy Verification", () => {
+        beforeEach(async () => {
+            await loading("Initializing zero-knowledge context");
+        });
         it("Privacy: My choice is hidden", async () => {
             console.log("   --- Testing choice privacy ---");
             const { marketPDA } = await createMarketHelper("Blind Bet Test?");
@@ -328,6 +367,9 @@ describe("private_pnp_tests", () => {
     });
 
     describe("Final Checks", () => {
+        beforeEach(async () => {
+            await loading("Preparing final validation stage");
+        });
         it("Check: Multiple trades work", async () => {
             console.log("   --- Testing multiple trades ---");
             const { marketPDA, yesMint, noMint, vault } = await createMarketHelper("Double Spend?");

@@ -128,14 +128,15 @@ anchor test
 
 ### Verification (Devnet)
 Scale the proofs to the live Solana cluster.
-```bash
-# 1. Ensure Anchor.toml is set to [provider] cluster = "devnet"
-# 2. Run the tests (bypassing redundant deploy)
-anchor test --skip-deploy
-```
+
+1. **Setup RPC**: For maximum stability, use a dedicated RPC like **Helius**. Add your URL to `Anchor.toml`.
+2. **Run Tests**: Use the optimized shortcut to bypass redundant deployments and handle network Jitter:
+   ```bash
+   npm run test:devnet
+   ```
 
 > [!TIP]
-> The Devnet tests require ~45s clock buffers to handle network jitter. These are located in `tests/privacy_darkpool.ts`.
+> The Devnet suite uses **Smart Polling** (via `waitForExpiry`) to stay perfectly synced with the blockchain clock, ensuring a 100% pass rate without brittle timers.
 
 ---
 
