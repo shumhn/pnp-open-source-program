@@ -1,36 +1,16 @@
-//! # Permissionless Prediction Markets
+//! # Private PNP: Hidden Prediction Markets
 //!
-//! This is an open-source skeleton implementation demonstrating how prediction markets
-//! can be built permissionlessly on Solana using smart contracts and AI oracles.
+//! A simple, professional prediction market on Solana with built-in privacy.
 //!
 //! ## Overview
 //!
-//! Prediction markets allow users to trade on the outcomes of future events.
-//! This implementation uses:
-//! - **Outcome Tokens**: YES/NO tokens representing each side of a prediction
-//! - **Automated Market Maker**: Bonding curve for dynamic pricing
-//! - **Permissionless Creation**: Anyone can create markets
-//! - **AI/Oracle Resolution**: Flexible resolution mechanism
+//! This project allows users to trade on future events without leaking 1. their choices, 
+//! 2. their identities, or 3. their bank balances.
 //!
-//! ## Architecture
+//! ## How it works
+//! - Inco FHE protects the choices and the market odds.
+//! - Light Protocol ZK-Compression protects the user's identity and money.
 //!
-//! ```text
-//! ┌─────────────────────────────────────────────────────────────┐
-//! │                    PREDICTION MARKET                         │
-//! │                                                              │
-//! │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-//! │  │   Collateral  │───▶│     AMM      │───▶│  YES/NO      │  │
-//! │  │   (USDC/SOL)  │    │   Bonding    │    │   Tokens     │  │
-//! │  └──────────────┘    │    Curve     │    └──────────────┘  │
-//! │                       └──────────────┘                       │
-//! │                              │                               │
-//! │                              ▼                               │
-//! │                    ┌──────────────┐                          │
-//! │                    │   Oracle/AI   │                         │
-//! │                    │  Resolution   │                         │
-//! │                    └──────────────┘                          │
-//! └─────────────────────────────────────────────────────────────┘
-//! ```
 
 use anchor_lang::prelude::*;
 
@@ -40,65 +20,153 @@ pub mod state;
 
 pub use amm::*;
 pub use instructions::*;
-pub use state::*;
 
 // Replace with your deployed program ID
-declare_id!("11111111111111111111111111111111");
+declare_id!("8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn");
 
-/// Main prediction market program
+/// Main Private PNP program
 #[program]
-pub mod prediction_market {
+pub mod private_pnp {
     use super::*;
 
     /// Initialize the protocol with global configuration
-    ///
-    /// This sets up:
-    /// - Admin authority
-    /// - Protocol fee structure
-    /// - Collateral token (e.g., USDC)
-    /// - Oracle/AI resolver address
-    ///
-    /// # Arguments
-    /// * `protocol_fee` - Fee in basis points (100 = 1%)
-    /// * `oracle` - Address authorized to resolve markets
     pub fn initialize(
         ctx: Context<Initialize>,
         protocol_fee: u64,
         oracle: Pubkey,
     ) -> Result<()> {
-        ctx.accounts.initialize(protocol_fee, oracle, ctx.bumps)
+        ctx.accounts.initialize(protocol_fee, oracle, &ctx.bumps)
     }
 
-    /// Create a new prediction market
-    ///
-    /// Anyone can create a market permissionlessly by:
-    /// 1. Defining a question/statement to predict
-    /// 2. Setting an end time for trading
-    /// 3. Providing initial liquidity
-    ///
-    /// # Arguments
-    /// * `question` - The prediction question (e.g., "Will BTC reach $100k by 2025?")
-    /// * `end_time` - Unix timestamp when trading ends
-    /// * `initial_liquidity` - Collateral to seed the market
-    pub fn create_market(
-        ctx: Context<CreateMarket>,
+    /// Create market state (Step 1)
+    pub fn create_market_state(
+        ctx: Context<CreateMarketState>,
         question: String,
         end_time: u64,
-        initial_liquidity: u64,
     ) -> Result<()> {
-        ctx.accounts
-            .create_market(question, end_time, initial_liquidity, ctx.bumps)
+        ctx.accounts.create_market_state(question, end_time, &ctx.bumps)
+    }
+
+    /// Create YES/NO token mints (Step 2)
+    pub fn create_market_mints(ctx: Context<CreateMarketMints>) -> Result<()> {
+        ctx.accounts.create_market_mints()
+    }
+
+    /// Create market vaults and creator token accounts (Step 3)
+    pub fn create_market_vaults(ctx: Context<CreateMarketVaults>) -> Result<()> {
+        ctx.accounts.create_market_vaults()
+    }
+
+    /// Fund market with initial liquidity (Step 4)
+    pub fn fund_market(ctx: Context<FundMarket>, initial_liquidity: u64) -> Result<()> {
+        ctx.accounts.fund_market(initial_liquidity)
+    }
+
+
+
+    /// Step 1: Open a private position
+    pub fn init_privacy_position(ctx: Context<InitPrivacyPosition>, commitment: [u8; 32]) -> Result<()> {
+        ctx.accounts.init_privacy_position(commitment, ctx.bumps.privacy_position)
+    }
+
+    /// Step 2: Buy tokens privately
+    pub fn trade_privacy(
+        ctx: Context<TradePrivacy>,
+        commitment: [u8; 32],
+        amount: u64,
+        buy_yes: bool,
+    ) -> Result<()> {
+        ctx.accounts.trade_privacy(commitment, amount, buy_yes)
+    }
+
+    /// Initialize a privacy payout claim (Step 1 of Dark Pool Exit)
+    pub fn init_privacy_claim(ctx: Context<InitPrivacyClaim>, commitment: [u8; 32]) -> Result<()> {
+        ctx.accounts.init_privacy_claim(commitment, ctx.bumps.privacy_claim)
+    }
+
+    /// Redeem a privacy position (Step 2 of Dark Pool Exit)
+    pub fn redeem_privacy_position(
+        ctx: Context<RedeemPrivacyPosition>,
+        position_commitment: [u8; 32],
+        payout_commitment: [u8; 32],
+    ) -> Result<()> {
+        ctx.accounts.redeem_privacy_position(position_commitment, payout_commitment)
+    }
+
+    /// Initialize trader tokens accounts (Standard AMM)
+    pub fn init_trader_vaults(_ctx: Context<InitTraderVaults>) -> Result<()> {
+        Ok(())
+    }
+
+    /// Trade with hidden choices (using Inco encryption)
+    pub fn trade_shielded(
+        ctx: Context<TradeShielded>,
+        commitment: [u8; 32],
+        direction_cipher: [u8; 32],
+        amount: u64,
+    ) -> Result<()> {
+        ctx.accounts.trade_shielded(commitment, direction_cipher, amount, ctx.bumps.shielded_position)
+    }
+
+    /// Reveal direction and redeem payout (post-resolution)
+    pub fn reveal_and_redeem(
+        ctx: Context<RevealAndRedeem>,
+        secret: [u8; 32],
+        commitment: [u8; 32],
+    ) -> Result<()> {
+        ctx.accounts.reveal_and_redeem(secret, commitment)
+    }
+
+    /// Advanced choice privacy (using Confidential Execution)
+    pub fn trade_confidential(
+        ctx: Context<TradeConfidential>,
+        commitment: [u8; 32],
+        encrypted_direction: [u8; 32],
+        amount: u64,
+    ) -> Result<()> {
+        ctx.accounts.trade_confidential(commitment, encrypted_direction, amount, ctx.bumps.confidential_position)
+    }
+
+    /// Advanced wallet privacy (using ZK-Compression)
+    pub fn create_compressed_position(
+        ctx: Context<CreateCompressedPosition>,
+        ownership_commitment: [u8; 32],
+        encrypted_direction: [u8; 32],
+        amount: u64,
+        compliance_commitment: [u8; 32],
+        view_key_hash: [u8; 32],
+        validity_proof: Vec<u8>,
+    ) -> Result<()> {
+        ctx.accounts.create_compressed_position(
+            ownership_commitment,
+            encrypted_direction,
+            amount,
+            compliance_commitment,
+            view_key_hash,
+            validity_proof
+        )
+    }
+
+    /// Create a market with hidden odds (using Inco)
+    pub fn create_encrypted_market(
+        ctx: Context<CreateEncryptedMarket>,
+        market_id: u64,
+        inco_pubkey: [u8; 32],
+        initial_encrypted_reserves: Vec<u8>,
+    ) -> Result<()> {
+        ctx.accounts.create_encrypted_market(market_id, inco_pubkey, initial_encrypted_reserves, ctx.bumps.encrypted_market)
+    }
+
+    /// Update reserves privately
+    pub fn update_encrypted_reserves(
+        ctx: Context<UpdateEncryptedReserves>,
+        encrypted_delta: Vec<u8>,
+        is_yes: bool,
+    ) -> Result<()> {
+        ctx.accounts.update_encrypted_reserves(encrypted_delta, is_yes)
     }
 
     /// Buy outcome tokens (YES or NO)
-    ///
-    /// Uses the AMM bonding curve to calculate token output.
-    /// Price adjusts dynamically based on supply/demand.
-    ///
-    /// # Arguments
-    /// * `amount` - Amount of collateral to spend
-    /// * `buy_yes` - true = buy YES tokens, false = buy NO tokens
-    /// * `min_tokens_out` - Slippage protection
     pub fn buy_tokens(
         ctx: Context<Trade>,
         amount: u64,
@@ -109,11 +177,6 @@ pub mod prediction_market {
     }
 
     /// Sell outcome tokens back to the pool
-    ///
-    /// # Arguments
-    /// * `amount` - Amount of tokens to sell
-    /// * `sell_yes` - true = sell YES tokens, false = sell NO tokens
-    /// * `min_collateral_out` - Slippage protection
     pub fn sell_tokens(
         ctx: Context<Trade>,
         amount: u64,
@@ -125,21 +188,22 @@ pub mod prediction_market {
     }
 
     /// Resolve the market (oracle/AI only)
-    ///
-    /// Called by the authorized oracle or AI agent to determine
-    /// the winning outcome after the market ends.
-    ///
-    /// # Arguments
-    /// * `yes_wins` - true if YES outcome occurred, false if NO
     pub fn resolve_market(ctx: Context<ResolveMarket>, yes_wins: bool) -> Result<()> {
         ctx.accounts.resolve_market(yes_wins)
     }
 
     /// Redeem winning tokens for collateral
-    ///
-    /// After market resolution, holders of winning tokens can
-    /// redeem them for their proportional share of the prize pool.
     pub fn redeem(ctx: Context<Redeem>) -> Result<u64> {
         ctx.accounts.redeem()
+    }
+
+    /// Step 1: Collect winnings privately
+    pub fn redeem_privacy(ctx: Context<RedeemPrivacy>, commitment: [u8; 32]) -> Result<()> {
+        ctx.accounts.redeem_privacy(commitment)
+    }
+
+    /// Step 2: Withdraw money to a fresh wallet
+    pub fn claim_privacy(ctx: Context<ClaimPrivacy>, secret: [u8; 32], _commitment: [u8; 32]) -> Result<()> {
+        ctx.accounts.claim(secret)
     }
 }

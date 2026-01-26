@@ -40,5 +40,5 @@ pub struct Config {
 }
 
 impl Config {
-    pub const SEED: &'static [u8] = b"config";
+    pub const SEED: &'static [u8] = b"config_v7";
 }
