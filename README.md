@@ -18,35 +18,35 @@ Prediction markets are fundamentally broken by total transparency. We solve eigh
 
 1.  **Alpha Leakage (Choice Privacy)**
     -   **Problem:** Public bets (YES/NO) reveal your strategy instantly.
-    -   **How:** Fully Homomorphic Encryption (FHE). Bets are processed as encrypted ciphertexts.
+    -   **How:** **Confidential Execution**. We use FHE to process bets as encrypted ciphertexts. The logic executes without ever decrypting your choice.
 
 2.  **Whale Surveillance (Identity Privacy)**
     -   **Problem:** Large account tracking allows the market to front-run whale entries.
-    -   **How:** ZK-Compression. Balances and identity are moved into a private Merkle Tree off-chain.
+    -   **How:** **ZK-Compression**. We offload account state into a private Merkle Tree. Your on-chain footprint is reduced to a single hashed root.
 
 3.  **MEV & Sandwich Attacks (Price Privacy)**
     -   **Problem:** Visible pool reserves allow bots to exploit trade slippage.
-    -   **How:** Shrouded Reserves. Market odds are hidden in encrypted state, preventing bot calculations.
+    -   **How:** **Shrouded AMM**. Market odds are stored in encrypted state variables. Bots cannot calculate the slippage needed to "sandwich" you.
 
 4.  **Destination Tracking (Anonymity)**
     -   **Problem:** Payouts to a trading wallet link all past history to current wealth.
-    -   **How:** Shielded Vaults. A secret-reveal scheme enables claims to fresh, unlinked wallets.
+    -   **How:** **Secret-Vault Payouts**. We use a commitment-reveal scheme. You trade with Wallet A and claim winnings to a fresh Wallet B using a one-time secret.
 
 5.  **Regulatory Friction (Selective Compliance)**
     -   **Problem:** Total "Black Boxes" are illegal and prevent institutional entry.
-    -   **How:** Auditor View Keys. Selective disclosure allows traders to prove compliance without global leaks.
+    -   **How:** **Auditor View Keys**. We implement a multi-sig bridge. You can share a specific key with an auditor for a safe, targeted disclosure.
 
 6.  **Solana Stack Limit (Technical Scaling)**
     -   **Problem:** Sophisticated privacy math exceeds Solana's 4KB stack memory.
-    -   **How:** Instruction Piping. Modularizing logic into an atomic multi-stage pipeline.
+    -   **How:** **Modular Instruction Piping**. We break the complex logic into an atomic multi-stage pipeline, ensuring we never hit the compute/memory ceiling.
 
 7.  **Gas-Leak Identity (Traceability)**
     -   **Problem:** Funding a wallet for gas links your identity to your private trade.
-    -   **How:** Meta-Transactions. Gasless relayers handle fees via signatures, maintaining total isolation.
+    -   **How:** **Gasless Paymasters**. We support relayer-signatures. A third party pays the gas, so your trading wallet stays completely isolated.
 
 8.  **AMM Instability (Economic Logic)**
-    -   **Problem:** Standard $xy=k$ math causes extreme price distortion in low-liquidity predictions.
-    -   **How:** Pythagorean Invariant ($R = \sqrt{X^2 + Y^2}$). Optimized math for realistic probability modeling.
+    -   **Problem:** Standard formulas cause extreme price distortion in low-liquidity predictions.
+    -   **How:** **Pythagorean Invariant ($R = \sqrt{X^2 + Y^2}$)**. We use a probability-normalized curve that maintains stable odds regardless of vault size.
 
 ---
 
