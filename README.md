@@ -90,19 +90,23 @@ We utilize a state-of-the-art **Pythagorean AMM** $R = \sqrt{YES^2 + NO^2}$. Unl
 - In Private Mode, the variables ($YES, NO, R$) are stored in an **Encrypted State**, preventing price-leakage bot attacks.
 
 ### Modular File Structure
+The codebase is partitioned into three logical layers to ensure maximum security and separation of concerns.
+
 ```text
-programs/prediction_market/src/
+src/
 ├── instructions/
-│   ├── public/               # Retail-facing transparent logic
-│   └── privacy/              # 🏛️ INSTITUTIONAL DARK POOL
-│       ├── confidential_execution.rs  # Layer 1: Encrypted Choice Processing
-│       ├── compressed_accounts.rs     # Layer 2: ZK-Compressed State
-│       ├── private_odds.rs            # Layer 3: Shielded AMM Sync
-│       └── privacy_exit.rs            # Layer 4: Anti-Trace Payouts
+│   ├── public/         # RETAIL: Transparent AMM logic (Buy/Sell/Redeem)
+│   ├── privacy/        # INSTITUTIONAL: The Confidential Dark Pool
+│   │   ├── confidential_execution.rs  # Layer 1: FHE Choice Encryption
+│   │   ├── compressed_accounts.rs     # Layer 2: ZK-State Compression
+│   │   ├── private_odds.rs            # Layer 3: Shrouded Reserve Updates
+│   │   └── privacy_exit.rs            # Layer 4: Anti-Trace Payout System
+│   └── market/         # ADMIN: Market Lifecycle & Oracle Resolution
 ├── amm/
-│   └── bonding_curve.rs      # Math engine for all market types
+│   └── bonding_curve.rs # CORE: Pythagorean Invariant Pricing Engine
 └── state/
-    └── market.rs             # Hybrid state (Encrypted + Public)
+    ├── market.rs       # STATE: Hybrid Public/Encrypted Ledger
+    └── config.rs       # STATE: Global Protocol Configuration
 ```
 
 ---
