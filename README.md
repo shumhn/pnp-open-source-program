@@ -139,26 +139,33 @@ anchor test --skip-deploy
 
 ---
 
-## Core Concepts
+## Technical Implementation: How We Do It
 
-### How It Works: The Hybrid Lifecycle
-1.  **Initialize Protocol**: Admin sets up global fees and the oracle/AI View Key permissions.
-2.  **Create Market**: Anyone can create a market with twin states: a **Public Standard AMM** and a **Shrouded Dark Pool**.
-3.  **Trade Confidential**: Users buy outcomes using **Confidential Execution**. The contract math executes on encrypted ciphertexts.
-4.  **Compress State**: Identity and amounts are moved into a **ZK-Compressed Merkle Tree**, making the trade invisible to whale trackers.
-5.  **Resolve & Reveal**: After resolution, winners provide a one-time secret reveal to claim their share from the shared pool to an unlinked destination.
+We implement privacy through four low-level engineering pillars that ensure no data is leaked to the public ledger.
 
-### The Pythagorean Bonding Curve
-We move away from standard constant-product formulas and use the **Pythagorean AMM invariant**:
-$$R = \sqrt{YES^2 + NO^2}$$
+### 1. Atomic Instruction Piping (Bypassing Stack Limits)
+Solana has a strict 4KB memory limit. Most privacy protocols fail because heavy crypto math exceeds this ceiling.
+- **The Logic:** We modularized the execution into an atomic multi-stage pipeline (`lib.rs`).
+- **The Flow:** **Phase 1: Encryption** -> **Phase 2: State Compression** -> **Phase 3: Shrouded Sync**.
+- **Result:** Institutional-grade privacy logic that never hits a compute or memory ceiling.
 
-*   **R**: Total collateral reserves.
-*   **YES / NO**: Supply of outcome tokens.
-*   **Pricing**: $YES_{price} = YES / R$.
-*   **Why it works**: Prices naturally represent probabilities (0-1). It maintains 100% liquidity regardless of vault size or imbalance.
+### 2. XOR-Cipher Hybrid (Choice Hiding)
+We protect your alpha by ensuring no one knows if you bet YES or NO until the market settles.
+- **The Logic:** Implementation in `shielded_trading.rs` using the `ShieldedPosition` primitive.
+- **The Math:** Traders submit a `direction_cipher` generated from `choice ^ keccak256(secret)`.
+- **Result:** The blockchain sees the trade volume, but your specific direction is invisible to observers and bots.
 
-### AI Oracle & Compliance
-The protocol is designed for **Autonomous Resolution**. AI Agents can resolve markets by submitting a resolution signature. For institutional safety, traders can provide an **Audit View Key** that allows valid entities to verify trade details without revealing the user's main wallet history.
+### 3. Merkle Leaf Offloading (ZK-Compression)
+To prevent "Whale Surveillance," we remove user balances from public view.
+- **The Logic:** Implementation in `compressed_accounts.rs`.
+- **The Mechanism:** User positions are compressed into a 32-byte Merkle Leaf stored in a private tree.
+- **Result:** Your position is a "Ghost" on-chain. Only a single hashed root exists globally, concealing your wealth.
+
+### 4. Payer-Recipient Decoupling (The Relayer Strategy)
+The most common privacy leak is paying for gas from a linked wallet.
+- **The Logic:** Implementation in `privacy_exit.rs`.
+- **The Strategy:** The `ClaimPrivacy` instruction separates the `claimant` (Gas Payer) from the `recipient` (Fresh Wallet).
+- **Result:** Relayers handle the fees via meta-transaction signatures, breaking the link between your identity and payout.
 
 ---
 
