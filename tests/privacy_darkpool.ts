@@ -139,6 +139,7 @@ describe("private_pnp_tests", () => {
     });
 
     const createMarketHelper = async (question: string) => {
+        process.stdout.write(`   🔹 Syncing: ${question} `);
         const configState = await program.account.config.fetch(configPDA);
         const idBN = configState.marketCount;
         const [marketPDA] = PublicKey.findProgramAddressSync([Buffer.from("market"), configPDA.toBuffer(), idBN.toArrayLike(Buffer, "le", 8)], program.programId);
@@ -150,23 +151,28 @@ describe("private_pnp_tests", () => {
         await program.methods.createMarketState(question, new BN(Math.floor(Date.now() / 1000) + duration)).accounts({
             creator: admin.publicKey, config: configPDA, market: marketPDA, collateralMint: collateralMint, systemProgram: SystemProgram.programId,
         } as any).signers([admin]).rpc();
+        process.stdout.write(".");
 
         await program.methods.createMarketMints().accounts({
             creator: admin.publicKey, config: configPDA, market: marketPDA, collateralMint: collateralMint, yesMint: yesMint, noMint: noMint, tokenProgram: TOKEN_PROGRAM_ID, systemProgram: SystemProgram.programId,
         } as any).signers([admin]).rpc();
+        process.stdout.write(".");
 
         const adminYes = getAssociatedTokenAddressSync(yesMint, admin.publicKey);
         const adminNo = getAssociatedTokenAddressSync(noMint, admin.publicKey);
         await program.methods.createMarketVaults().accounts({
             creator: admin.publicKey, market: marketPDA, yesMint, noMint, collateralMint, vault, creatorYes: adminYes, creatorNo: adminNo, tokenProgram: TOKEN_PROGRAM_ID, associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID, systemProgram: SystemProgram.programId,
         } as any).signers([admin]).rpc();
+        process.stdout.write(".");
 
         const adminCollateral = (await getOrCreateAssociatedTokenAccount(provider.connection, admin, collateralMint, admin.publicKey)).address;
         await mintTo(provider.connection, admin, collateralMint, adminCollateral, admin, 100_000_000);
+        process.stdout.write(".");
 
         await program.methods.fundMarket(new BN(50_000_000)).accounts({
             creator: admin.publicKey, config: configPDA, market: marketPDA, yesMint: yesMint, noMint: noMint, collateralMint: collateralMint, creatorCollateral: adminCollateral, vault, creatorYes: adminYes, creatorNo: adminNo, tokenProgram: TOKEN_PROGRAM_ID,
         } as any).signers([admin]).rpc();
+        console.log(" ✅ Ready.");
 
         return { marketPDA, yesMint, noMint, vault };
     };
@@ -261,7 +267,12 @@ describe("private_pnp_tests", () => {
 
             // The lock period for privacy claims still exists, wait for it
             const redeemWait = isLocalnet ? 12000 : 25000;
-            await new Promise(r => setTimeout(r, redeemWait));
+            process.stdout.write(`     ⏳ Waiting for lock reveal (${redeemWait / 1000}s) `);
+            for (let i = 0; i < 10; i++) {
+                process.stdout.write(".");
+                await new Promise(r => setTimeout(r, redeemWait / 10));
+            }
+            console.log(" ✅ Done.");
             const recipientCollateral = getAssociatedTokenAddressSync(collateralMint, freshWallet.publicKey);
             await program.methods.claimPrivacy(Array.from(payoutSecret) as any, Array.from(payoutCommitment) as any).accounts({
                 claimant: relayer.publicKey, privacyClaim, collateralMint, privacyVault, recipientCollateral, recipientAccount: freshWallet.publicKey, tokenProgram: TOKEN_PROGRAM_ID, associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID, systemProgram: SystemProgram.programId,

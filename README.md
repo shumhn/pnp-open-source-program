@@ -129,14 +129,16 @@ anchor test
 ### Verification (Devnet)
 Scale the proofs to the live Solana cluster.
 
-1. **Setup RPC**: For maximum stability, use a dedicated RPC like **Helius** (Optional). You can also use the default public RPC by setting `cluster = "devnet"` in `Anchor.toml`.
-2. **Run Tests**: Use the optimized shortcut to bypass redundant deployments and handle network jitter:
+1. **Setup RPC**: For maximum stability, use a dedicated RPC like **Helius** (Optional).
+   > [!CAUTION]
+   > The public `api.devnet.solana.com` often drops connections during the full 16-test suite (~9 mins). For institutional verification, Helius or QuickNode is highly recommended.
+2. **Run Tests**: Use the optimized shortcut:
    ```bash
    npm run test:devnet
    ```
 
 > [!TIP]
-> The Devnet suite uses **Smart Polling** (via `waitForExpiry`) to stay perfectly synced with the blockchain clock, ensuring a 100% pass rate without brittle timers.
+> The suite now includes **Visual Progress Indicators** and **Smart Polling** (via `waitForExpiry`) to stay perfectly synced with the blockchain.
 
 ---
 
