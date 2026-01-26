@@ -14,39 +14,39 @@ Open-source permissionless prediction markets on Solana with privacy.
 ---
 
 ## The Wall of Problems: Why Private PNP Matters
-Prediction markets are fundamentally broken by total transparency. We solve eight industry barriers through modular cryptography.
+Prediction markets are currently too transparent for institutional players. We solve eight fundamental barriers by modularizing the privacy stack.
 
 1.  **Alpha Leakage (Choice Privacy)**
-    -   **Problem:** Public bets (YES/NO) reveal your strategy instantly.
-    -   **How:** **Confidential Execution**. We use FHE to process bets as encrypted ciphertexts. The logic executes without ever decrypting your choice.
+    -   **Problem:** Every bet (YES/NO) is public, allowing bots to exploit your strategy.
+    -   **How it works:** **Confidential Execution**. We use Fully Homomorphic Encryption (FHE) to process choices as encrypted ciphertexts. The code computes market impact without ever "seeing" your direction.
 
 2.  **Whale Surveillance (Identity Privacy)**
-    -   **Problem:** Large account tracking allows the market to front-run whale entries.
-    -   **How:** **ZK-Compression**. We offload account state into a private Merkle Tree. Your on-chain footprint is reduced to a single hashed root.
+    -   **Problem:** Large account tracking allows the market to front-run whale movements.
+    -   **How it works:** **ZK-Compressed State**. We move user positions into a private Merkle Tree off-chain. Only a 32-byte root is stored on-chain, making your identity and balance invisible.
 
 3.  **MEV & Sandwich Attacks (Price Privacy)**
-    -   **Problem:** Visible pool reserves allow bots to exploit trade slippage.
-    -   **How:** **Shrouded AMM**. Market odds are stored in encrypted state variables. Bots cannot calculate the slippage needed to "sandwich" you.
+    -   **Problem:** Bots calculate slippage from public reserves to "sandwich" your trades.
+    -   **How it works:** **Encrypted Reserves**. Market odds (YES/NO supply) are stored in an encrypted state. Mathematical exploitation is impossible because the bot cannot solve for your slippage.
 
 4.  **Destination Tracking (Anonymity)**
-    -   **Problem:** Payouts to a trading wallet link all past history to current wealth.
-    -   **How:** **Secret-Vault Payouts**. We use a commitment-reveal scheme. You trade with Wallet A and claim winnings to a fresh Wallet B using a one-time secret.
+    -   **Problem:** Payouts to your trading wallet link all past transactions to your wealth.
+    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. You trade with Wallet A, but claim winnings to a completely fresh Wallet B using a one-time secret.
 
 5.  **Regulatory Friction (Selective Compliance)**
-    -   **Problem:** Total "Black Boxes" are illegal and prevent institutional entry.
-    -   **How:** **Auditor View Keys**. We implement a multi-sig bridge. You can share a specific key with an auditor for a safe, targeted disclosure.
+    -   **Problem:** Total "Black Boxes" are non-compliant for institutional reporting.
+    -   **How it works:** **Auditor View Keys**. We implement selective disclosure. You can provide a specific key to an auditor to verify your trades without leaking data to the public.
 
 6.  **Solana Stack Limit (Technical Scaling)**
     -   **Problem:** Sophisticated privacy math exceeds Solana's 4KB stack memory.
-    -   **How:** **Modular Instruction Piping**. We break the complex logic into an atomic multi-stage pipeline, ensuring we never hit the compute/memory ceiling.
+    -   **How it works:** **Modular Instruction Piping**. We break the complex logic into an atomic multi-stage pipeline, ensuring high performance without hitting blockchain limits.
 
 7.  **Gas-Leak Identity (Traceability)**
-    -   **Problem:** Funding a wallet for gas links your identity to your private trade.
-    -   **How:** **Gasless Paymasters**. We support relayer-signatures. A third party pays the gas, so your trading wallet stays completely isolated.
+    -   **Problem:** Funding a wallet for gas links your identity across the network.
+    -   **How it works:** **Meta-Transactions**. We support relayer-signatures. A third party covers your gas fees so your anonymous wallet stays isolated.
 
 8.  **AMM Instability (Economic Logic)**
-    -   **Problem:** Standard formulas cause extreme price distortion in low-liquidity predictions.
-    -   **How:** **Pythagorean Invariant ($R = \sqrt{X^2 + Y^2}$)**. We use a probability-normalized curve that maintains stable odds regardless of vault size.
+    -   **Problem:** Low liquidity leads to unrealistic price distortion in standard models.
+    -   **How it works:** **Pythagorean AMM ($R = \sqrt{X^2 + Y^2}$)**. We use a probability-normalized curve that maintains stable odds and reflects true event probability.
 
 ---
 
