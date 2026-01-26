@@ -129,8 +129,8 @@ anchor test
 ### Verification (Devnet)
 Scale the proofs to the live Solana cluster.
 
-1. **Setup RPC**: For maximum stability, use a dedicated RPC like **Helius**. Add your URL to `Anchor.toml`.
-2. **Run Tests**: Use the optimized shortcut to bypass redundant deployments and handle network Jitter:
+1. **Setup RPC**: For maximum stability, use a dedicated RPC like **Helius** (Optional). You can also use the default public RPC by setting `cluster = "devnet"` in `Anchor.toml`.
+2. **Run Tests**: Use the optimized shortcut to bypass redundant deployments and handle network jitter:
    ```bash
    npm run test:devnet
    ```
