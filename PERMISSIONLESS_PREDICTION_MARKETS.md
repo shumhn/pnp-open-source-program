@@ -8,6 +8,7 @@
 
 Prediction markets are financial instruments that allow participants to trade on the outcomes of future events. This repository demonstrates how to build **permissionless** prediction markets where:
 
+- ✅ **Privacy-First** execution using FHE and ZK-Compression
 - ✅ **Anyone** can create markets without permission
 - ✅ **Anyone** can trade without intermediaries  
 - ✅ **AI agents** or decentralized oracles resolve outcomes
@@ -15,13 +16,16 @@ Prediction markets are financial instruments that allow participants to trade on
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│                    PERMISSIONLESS FLOW                              │
+│                    PERMISSIONLESS "PRIVATE PNP" FLOW                │
 │                                                                     │
 │   User A                     Smart Contract                User B   │
-│   ┌─────┐                    ┌───────────┐                ┌─────┐  │
-│   │Create│───"Will X?"──────▶│  Market   │◀──"Buy YES"────│Trade│  │
-│   │Market│                   │           │                │     │  │
-│   └─────┘                    └─────┬─────┘                └─────┘  │
+│   ┌─────┐             ┌─────────────────────────┐         ┌─────┐  │
+│   │Create│──"Will X?"▶│  Hybrid Market Logic    │◀"Shield"│Trade│  │
+│   │Market│            │ ┌──────┐   ┌──────────┐ │ "Buy"   │     │  │
+│   └─────┘             │ │Public│   │Confiden. │ │         └─────┘  │
+│                       │ │ AMM  │   │Execution │ │                  │
+│                       │ └──────┘   └──────────┘ │                  │
+│                       └────────────┬────────────┘                  │
 │                                    │                                │
 │                              ┌─────▼─────┐                         │
 │                              │  AI/Oracle │                         │
@@ -117,12 +121,12 @@ Token prices naturally represent the market's collective belief about probabilit
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  ┌──────────────────┐         ┌──────────────────┐             │
-│  │   Global Config  │         │      Market      │             │
+│  │   Global Config  │         │   Hybrid Market  │             │
 │  │   ─────────────  │         │   ────────────   │             │
 │  │ • Admin          │         │ • Question       │             │
 │  │ • Oracle         │         │ • End Time       │             │
-│  │ • Fee Settings   │         │ • YES/NO Mints   │             │
-│  │ • Collateral     │         │ • Reserves       │             │
+│  │ • Fee Settings   │         │ • Public State   │             │
+│  │ • Collateral     │         │ • Shielded State │             │
 │  └──────────────────┘         │ • Status         │             │
 │           │                    └────────┬─────────┘             │
 │           │                             │                        │
@@ -131,17 +135,17 @@ Token prices naturally represent the market's collective belief about probabilit
 │  │                   INSTRUCTIONS                    │          │
 │  │  ┌──────────┐ ┌──────────┐ ┌─────────┐ ┌──────┐ │          │
 │  │  │Initialize│ │  Create  │ │  Trade  │ │Redeem│ │          │
-│  │  │          │ │  Market  │ │ (Buy/   │ │      │ │          │
-│  │  │          │ │          │ │  Sell)  │ │      │ │          │
+│  │  │          │ │  Market  │ │ (Public/│ │      │ │          │
+│  │  │          │ │          │ │ Private)│ │      │ │          │
 │  │  └──────────┘ └──────────┘ └─────────┘ └──────┘ │          │
 │  └──────────────────────────────────────────────────┘          │
 │                           │                                      │
 │                           ▼                                      │
 │  ┌──────────────────────────────────────────────────┐          │
-│  │               EXTERNAL INTEGRATIONS               │          │
+│  │               PRIVACY INFRASTRUCTURE              │          │
 │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐ │          │
-│  │  │ SPL Token  │  │  AI Agent  │  │   Oracle   │ │          │
-│  │  │  Program   │  │  Resolver  │  │  Network   │ │          │
+│  │  │Confidential│  │     ZK     │  │  Auditor   │ │          │
+│  │  │ Execution  │  │Compression │  │  View Key  │ │          │
 │  │  └────────────┘  └────────────┘  └────────────┘ │          │
 │  └──────────────────────────────────────────────────┘          │
 │                                                                  │

@@ -1,5 +1,5 @@
 [package]
-name = "prediction_market"
+name = "private_pnp"
 version = "0.1.0"
 description = "Open-source permissionless prediction markets on Solana"
 edition = "2021"
@@ -8,7 +8,7 @@ repository = "https://github.com/your-org/permissionless-prediction-markets"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "prediction_market"
+name = "private_pnp"
 
 [features]
 no-entrypoint = []
@@ -16,10 +16,13 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
-anchor-lang = "0.30"
+anchor-lang = { version = "0.30", features = ["init-if-needed"] }
 anchor-spl = { version = "0.30", features = ["metadata"] }
+inco-lightning = { version = "0.1.4", features = ["cpi"] }
+# light-sdk = "0.11" # Commented out - using research-style stub instead
 
 [dev-dependencies]
 solana-program-test = "1.18"

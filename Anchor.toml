@@ -3,16 +3,16 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-prediction_market = "11111111111111111111111111111111"
+private_pnp = "8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn"
 
 [programs.devnet]
-prediction_market = "11111111111111111111111111111111"
+private_pnp = "8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
