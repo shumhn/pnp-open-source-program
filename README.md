@@ -186,10 +186,20 @@ We run a rigorous localnet simulation for every deployment. **All 16 institution
 
 ---
 
-## Future Roadmap (Institutional Tier-0)
-1. **Gasless Paymasters**: Fully automated relayers.
-2. **Encrypted Governance**: Shielded DAO voting on market resolutions.
-3. **Cross-Chain Compression**: Expanding the dark pool to other L1s via Light.
+## Future Roadmap
+
+### Institutional Tier-0 (Near-Term)
+1. **Gasless Paymasters**: Fully automated relayers to eliminate all on-chain gas links.
+2. **Encrypted Governance**: Shielded DAO voting where votes are tallied without revealing individual positions.
+3. **Cross-Chain Compression**: Expanding the modular Dark Pool to other L1s using Light Protocol's cross-chain state.
+4. **ZK-Intent Matching**: Off-chain private orderbooks that only reveal matches, preventing bot front-running of trading "intent."
+5. **Confidential Yield**: Integrated yield-bearing vaults that accrue interest on private collateral without revealing the principal amount.
+6. **Retroactive Shielding**: A bridge allowing users to take existing "Public" winning tokens and move them into the Dark Pool for anonymous withdrawal.
+
+### Institutional Tier-1 (The Privacy Frontier)
+- **Anonymous Identity (ZK-KYC)**: Integration with ZK-Proof identity providers to verify user eligibility (humanity/region) without leaking the trader's real-world identity.
+- **Shielded AI Oracles**: Leveraging Trusted Execution Environments (TEEs) or FHE-encrypted API feeds to allow markets to settle based on data that remains encrypted even to the Oracle itself.
+- **Social Dark Pools**: "Ghost-Following" architecture where retail users can copy-trade institutional strategies without the lead trader's wallet or total AUM ever being exposed.
 
 ---
 
