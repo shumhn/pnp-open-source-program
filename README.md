@@ -1,7 +1,6 @@
-# Private PNP: The All-In-One Institutional Dark Pool
+# Private PNP
 
-> **Total Confidentiality. Institutional Compliance. Extreme Performance.**
-> _The most complete privacy-first prediction market architecture on Solana._
+Open-source permissionless prediction markets on Solana with privacy.
 
 ---
 
