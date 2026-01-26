@@ -14,39 +14,39 @@ Open-source permissionless prediction markets on Solana with privacy.
 ---
 
 ## The Wall of Problems: Why Private PNP Matters
-Prediction markets are currently too transparent for serious players. We solve eight fundamental barriers by letting the code handle the privacy.
+Prediction markets are fundamentally broken by total transparency. We solve eight industry barriers through modular cryptography.
 
 1.  **Alpha Leakage (Choice Privacy)**
-    -   **Problem:** Everyone sees your bet (YES/NO), allowing bots to front-run your logic.
-    -   **How it works:** Confidential Execution via FHE. Your choice is encrypted on-chain until the market settles.
+    -   **Problem:** Public bets (YES/NO) reveal your strategy instantly.
+    -   **How:** Fully Homomorphic Encryption (FHE). Bets are processed as encrypted ciphertexts.
 
 2.  **Whale Surveillance (Identity Privacy)**
-    -   **Problem:** Wallet tracking reveals whale movements and positions.
-    -   **How it works:** ZK-Compressed State. Identity and balances are offloaded into a private Merkle Tree.
+    -   **Problem:** Large account tracking allows the market to front-run whale entries.
+    -   **How:** ZK-Compression. Balances and identity are moved into a private Merkle Tree off-chain.
 
 3.  **MEV & Sandwich Attacks (Price Privacy)**
-    -   **Problem:** Bots calculate price impact from public reserves to exploit your trades.
-    -   **How it works:** Encrypted Reserves. Market odds are hidden, making mathematical front-running impossible.
+    -   **Problem:** Visible pool reserves allow bots to exploit trade slippage.
+    -   **How:** Shrouded Reserves. Market odds are hidden in encrypted state, preventing bot calculations.
 
-4.  **Destination Tracking (Transaction Linking)**
-    -   **Problem:** Payouts to your main wallet link your trade history to your identity.
-    -   **How it works:** Shielded Vaults. Use a one-time secret to claim winnings to a fresh, unlinked wallet.
+4.  **Destination Tracking (Anonymity)**
+    -   **Problem:** Payouts to a trading wallet link all past history to current wealth.
+    -   **How:** Shielded Vaults. A secret-reveal scheme enables claims to fresh, unlinked wallets.
 
-5.  **Regulatory Friction (Selective Disclosure)**
-    -   **Problem:** Total privacy is often non-compliant with institutional requirements.
-    -   **How it works:** View Keys. Grant temporary access to specific auditors without exposing public data.
+5.  **Regulatory Friction (Selective Compliance)**
+    -   **Problem:** Total "Black Boxes" are illegal and prevent institutional entry.
+    -   **How:** Auditor View Keys. Selective disclosure allows traders to prove compliance without global leaks.
 
 6.  **Solana Stack Limit (Technical Scaling)**
-    -   **Problem:** Complex privacy math exceeds Solana's 4KB stack memory limit.
-    -   **How it works:** Modular Instruction Piping. Breaks logic into atomic chunks to stay within blockchain limits.
+    -   **Problem:** Sophisticated privacy math exceeds Solana's 4KB stack memory.
+    -   **How:** Instruction Piping. Modularizing logic into an atomic multi-stage pipeline.
 
-7.  **Gas-Leak Identity (On-chain Traceability)**
-    -   **Problem:** Paying for gas links your private trade to a funded wallet.
-    -   **How it works:** Meta-Transactions. Relayers cover gas fees, allowing "zero-balance" anonymous claims.
+7.  **Gas-Leak Identity (Traceability)**
+    -   **Problem:** Funding a wallet for gas links your identity to your private trade.
+    -   **How:** Meta-Transactions. Gasless relayers handle fees via signatures, maintaining total isolation.
 
-8.  **AMM Instability (Price Volatility)**
-    -   **Problem:** Low liquidity leads to unrealistic price swings ($xy=k$ fails).
-    -   **How it works:** Pythagorean Invariant ($R = \sqrt{X^2 + Y^2}$). Stabilizes odds and reflects true probability.
+8.  **AMM Instability (Economic Logic)**
+    -   **Problem:** Standard $xy=k$ math causes extreme price distortion in low-liquidity predictions.
+    -   **How:** Pythagorean Invariant ($R = \sqrt{X^2 + Y^2}$). Optimized math for realistic probability modeling.
 
 ---
 
