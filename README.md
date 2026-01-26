@@ -6,9 +6,9 @@ Open-source permissionless prediction markets on Solana with privacy.
 
 ## Deployment Status
 - **Network**: Solana Devnet
-- **Program ID**: `8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn`
-- **Config PDA**: `3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ`
-- **Verification**: **16/16 Institutional Proofs Passing**
+- **Program ID**: [`8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn`](https://explorer.solana.com/address/8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn?cluster=devnet)
+- **Config PDA**: [`3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ`](https://explorer.solana.com/address/3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ?cluster=devnet)
+- **Verification**: [**16/16 Institutional Proofs Passing**](tests/privacy_darkpool.ts)
 - **Infrastructure**: Powered by **Helius** and **Confidential Execution**.
 
 ---
