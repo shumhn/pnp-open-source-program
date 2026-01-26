@@ -13,40 +13,40 @@ Open-source permissionless prediction markets on Solana with privacy.
 
 ---
 
-## The "Wall of Problems": Why Private PNP Matters
-Existing prediction markets are not built for serious financial players. Every single move a trader makes is leaked to the public. We didn't just solve "privacy"—we solved **seven distinct industry barriers**:
+## The Wall of Problems: Why Private PNP Matters
+Prediction markets are currently too transparent for serious players. We solve eight fundamental barriers by letting the code handle the privacy.
 
-### 1. Alpha Leakage (Choice Privacy)
-*   **Problem**: In standard markets, everyone sees if you bet YES or NO instantly. Bots front-run your logic and evaporate your edge.
-*   **Our Solution**: **Confidential Execution**. Bets are encrypted. The world knows you traded, but only *you* know your direction until the market settles.
+1.  **Alpha Leakage (Choice Privacy)**
+    -   **Problem:** Everyone sees your bet (YES/NO), allowing bots to front-run your logic.
+    -   **How it works:** Confidential Execution via FHE. Your choice is encrypted on-chain until the market settles.
 
-### 2. Whale Surveillance (Identity Privacy)
-*   **Problem**: Large account balances are easy to track. A "Whale" cannot enter a position without everyone watching their wallet address.
-*   **Our Solution**: **ZK-Compression State**. We move user balances off-chain into a privacy-focused compressed tree. You are a "Ghost" in the pool.
+2.  **Whale Surveillance (Identity Privacy)**
+    -   **Problem:** Wallet tracking reveals whale movements and positions.
+    -   **How it works:** ZK-Compressed State. Identity and balances are offloaded into a private Merkle Tree.
 
-### 3. MEV & Sandwich Attacks (Price Privacy)
-*   **Problem**: Public pools show exact reserves, allowing bots to calculate price impact and "sandwich" your trade for profit.
-*   **Our Solution**: **Encrypted Reserves**. We hide market odds. Bots can't compute your slippage, making mathematical exploitation impossible.
+3.  **MEV & Sandwich Attacks (Price Privacy)**
+    -   **Problem:** Bots calculate price impact from public reserves to exploit your trades.
+    -   **How it works:** Encrypted Reserves. Market odds are hidden, making mathematical front-running impossible.
 
-### 4. � Destination Tracking (Transaction Linking)
-*   **Problem**: Even if your trade is private, your payout usually goes back to the same wallet, linking your wealth to your history.
-*   **Our Solution**: **Shielded Payout Commitments**. We bridge funds through a "Secret Vault." Users reveal a one-time secret to claim winnings to a **fresh, unlinked wallet**.
+4.  **Destination Tracking (Transaction Linking)**
+    -   **Problem:** Payouts to your main wallet link your trade history to your identity.
+    -   **How it works:** Shielded Vaults. Use a one-time secret to claim winnings to a fresh, unlinked wallet.
 
-### 5. Regulatory Friction (The Compliance Paradox)
-*   **Problem**: "Dark Pools" are often illegal because regulators can't see anything. Institutional money stays away from "black boxes."
-*   **Our Solution**: **Selective Disclosure (View Keys)**. We built an "Auditor Bridge." Users can share a private key with a specific party to prove compliance without exposing themselves to the public.
+5.  **Regulatory Friction (Selective Disclosure)**
+    -   **Problem:** Total privacy is often non-compliant with institutional requirements.
+    -   **How it works:** View Keys. Grant temporary access to specific auditors without exposing public data.
 
-### 6. The Solana Stack Limit (Technical Barrier)
-*   **Problem**: Complex privacy math usually crashes Solana because of the strict 4KB memory stack. Most projects are forced to be simple.
-*   **Our Solution**: **Modular instruction Piping**. We broke the "Mega-Contract" into a multi-stage atomic pipeline, allowing for institutional-grade logic without hitting blockchain limits.
+6.  **Solana Stack Limit (Technical Scaling)**
+    -   **Problem:** Complex privacy math exceeds Solana's 4KB stack memory limit.
+    -   **How it works:** Modular Instruction Piping. Breaks logic into atomic chunks to stay within blockchain limits.
 
-### 7. The Gas-Leak Identity (On-chain Traceability)
-*   **Problem**: Paying for gas links your identity to a funded wallet. Even a private trade is ruined if the gas comes from a linked address.
-*   **Our Solution**: **Meta-Transaction Architecture**. We built nonces and relayer-signature support into the payout layer, enabling "0-Balance" claims where a third party covers the gas.
+7.  **Gas-Leak Identity (On-chain Traceability)**
+    -   **Problem:** Paying for gas links your private trade to a funded wallet.
+    -   **How it works:** Meta-Transactions. Relayers cover gas fees, allowing "zero-balance" anonymous claims.
 
-### 8. AMM Instability (Economic Volatility)
-*   **Problem**: Small liquidity in prediction markets leads to wild, unrealistic price swings.
-*   **Our Solution**: **Pythagorean Bonding Curve**. We use an advanced pricing invariant ($R = \sqrt{YES^2 + NO^2}$) that stabilizes prices and reflects true probability better than standard DEX math.
+8.  **AMM Instability (Price Volatility)**
+    -   **Problem:** Low liquidity leads to unrealistic price swings ($xy=k$ fails).
+    -   **How it works:** Pythagorean Invariant ($R = \sqrt{X^2 + Y^2}$). Stabilizes odds and reflects true probability.
 
 ---
 
