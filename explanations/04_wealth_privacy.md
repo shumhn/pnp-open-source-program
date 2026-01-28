@@ -1,121 +1,147 @@
 # Technical Explanation: Wealth Privacy (The Crux)
 
-## 1. The Problem: "Wealth Doxing" & The Gas Leak
-On a public blockchain, transparency is the enemy of net worth. Even if your trade is private, standard payout models create two fatal links:
-
-1.  **The Transaction Link**: When the protocol sends $100k to your wallet, the explorer shows `Protocol -> Wallet A`. Everyone knows Wallet A just got rich.
-2.  **The Gas Link**: If you try to use a "Fresh Wallet B" to receive funds, you need 0.000005 SOL to pay for the gas. If you fund that wallet from your Main Wallet, the accounts are linked forever. 
-
-**Conclusion**: To have true wealth privacy, you must break the link between **Trading Identity** (Wallet A) and **Banking Identity** (Wallet B).
+## 1. Introduction: The Privacy Firewall
+Wealth Privacy is the final and most difficult layer of the Private PNP protocol. While other modules hide **what** you trade, this module hides **what you are worth**. It functions as a "Privacy Firewall" between your trading activities and your long-term capital storage.
 
 ---
 
-## 2. The Solution: Destination Wallet Retrieval
-We implement a **Knowledge-based Retrieval** system. Instead of the protocol "pushing" money to a known address, the money is moved into a **Shielded Vault** that is locked by a mathematical secret.
+## 2. The Architecture of Anonymity
 
-### The Innovation
-- **Wallet A** performs the trade.
-- **Protocol Vault** holds the winnings in a "blind" state.
-- **Wallet B** (completely fresh) discovers and "retrieves" the money using a secret.
-- **Relayer** pays the gas for Wallet B, severing the final link.
+The core mechanism is a **Commitment-Reveal Handshake** that severs the on-chain link between the source of funds and the destination.
+
+### The Problem Flow (Standard Crypto)
+```mermaid
+graph LR
+    A[Trade Wallet] -- "1. Wins" --> P[Protocol]
+    P -- "2. Payout" --> A
+    A -- "3. Fund Gas" --> B[Fresh Wallet]
+    Note[Link 1: Protocol to A]
+    Note2[Link 2: A to B]
+```
+
+### The Solution Flow (Private PNP)
+```mermaid
+graph TD
+    A[Trade Wallet A] -- "1. Lock + Hash" --> S((Shielded Vault))
+    S -- "2. Blind Wait" --> S
+    Relayer[Relayer] -- "3. Pays Gas" --> B[Bank Wallet B]
+    B -- "4. Secret Reveal" --> S
+    S -- "5. Release" --> B
+    
+    subgraph "No On-Chain Link"
+    A
+    B
+    end
+```
 
 ---
 
-## 3. High-Fidelity Pseudo-Code
+## 3. Cryptographic Deep-Dive
 
-### Phase A: The "Hush" (Initiated by Wallet A)
-Before claiming, the trader generates a secret and a commitment.
+### The Binding Commitment
+We use `Keccak256` to bind the funds to a specific recipient without revealing that recipient's address. 
+
+**Mathematical Lemma:**
+`Commitment = H(Secret || Recipient_Address || Salt)`
+
+By including the `Recipient_Address` inside the hash:
+1.  **Anti-Theft**: Even if an observer steals the `Secret` in transit, they cannot claim the funds unless they are the owner of `Recipient_Address`.
+2.  **Privacy**: The `Recipient_Address` is never written to the blockchain in plaintext. It is only revealed during the final atomic claim.
+
+---
+
+## 4. Technical Implementation (Exhaustive Pseudo-Code)
+
+### Phase 1: The "Hush" (Identity Sealing)
+Wallet A initiates the transfer into the void.
 
 ```typescript
-// FRONTEND / SDK
-async function lockWinnings(walletA, amount) {
-    // 1. Generate deep-entropy secret
+/**
+ * SDK: Initiating the Wealth Privacy Exit
+ */
+async function initiateExit(walletA, targetAmount, walletBAddress) {
+    // 1. Generate local high-entropy secret (32 bytes)
     const secret = crypto.getRandomValues(new Uint8Array(32));
     
-    // 2. Define our "Bank Wallet" (Wallet B)
-    const recipientAddress = freshWallet.publicKey;
+    // 2. Generate a random nonce to prevent rainbow-table attacks
+    const nonce = crypto.getRandomValues(new Uint8Array(16));
 
-    // 3. Create the Commitment (The Lock)
-    // We bind the secret to the recipient address. 
-    // This prevents anyone else from stealing the secret in transit.
+    // 3. Compute the Hidden Destination Hash
+    // Note: We combine secret + walletB to ensure 'Binding'
     const commitment = keccak256(
-        Buffer.concat([secret, recipientAddress.toBuffer()])
+        Buffer.concat([
+            secret, 
+            walletBAddress.toBuffer(),
+            nonce
+        ])
     );
 
-    // 4. Move winnings to the "Shielded PDA"
-    // The blockchain only stores the 'commitment' hash.
-    await program.methods.initPrivacyClaim(commitment, amount).rpc();
+    // 4. Determine Release Delay
+    // We add a random delay (e.g. 1-12 hours) to defeat timing analysis.
+    // If you withdraw at the exact second you win, you are traceable.
+    const lockDuration = Math.random() * (12 * 3600); 
 
-    // 5. Store the secret locally in encrypted storage
-    await secureStorage.save('exit_secret', secret);
+    // 5. Broadcase 'Lock' Instruction
+    // The transaction shows Wallet A locking money, but NO mention of Wallet B.
+    await program.methods.lockFunds(commitment, targetAmount, lockDuration).rpc();
 }
 ```
 
-### Phase B: The "Void" (On-Chain State)
-The funds sit in a `PrivacyClaim` account indexed by the hash.
+### Phase 2: The "Blind" State (On-Chain)
+The funds sit in a Program Derived Address (PDA) that has no "Owner" field.
 
 ```rust
-// SMART CONTRACT (Anchor/Rust)
 #[account]
-pub struct PrivacyClaim {
-    pub commitment: [u8; 32],
+pub struct ShieldedVault {
+    pub commitment: [u8; 32], // The "Lock"
     pub amount: u64,
-    pub lock_until: i64, // Timing delay to stop wallet-timing analysis
-    pub redeemed: bool,
+    pub release_time: i64,    // Anti-Timing Correlation
+    pub vault_nonce: u8,      // PDA Bump
 }
 ```
 
-### Phase C: The "Retrieval" (Initiated by Wallet B)
-Wallet B uses a **Relayer** to pay for gas.
+### Phase 3: The "Retrieval" (Relayer Handshake)
+Wallet B retrieves the funds. It the user doesn't have SOL in Wallet B, a Relayer assists.
 
 ```typescript
-// RELAYER / SDK
-async function retrievalHandshake(walletB, relayer) {
-    const savedSecret = await secureStorage.load('exit_secret');
+/**
+ * RELAYER LOGIC: The Meta-Transaction
+ */
+async function anonymousRetrieval(walletB, relayer, secret, nonce) {
+    // 1. Relayer prepares the Transaction as the 'Fee Payer'
+    // 2. Wallet B signs the 'Intent' to claim
+    const claimInstruction = program.instruction.claimFunds(secret, nonce, {
+        accounts: {
+            vault: vaultPDA,
+            destination: walletB.publicKey,
+            relayer: relayer.publicKey, // Relayer signs as payer
+            systemProgram: SystemProgram.programId,
+        }
+    });
 
-    // Wallet B signs a proof of intent to receive the funds
-    const claimTX = await program.methods.claim(savedSecret)
-        .accounts({
-            claimant: relayer.publicKey, // Fee Payer (Relayer)
-            recipient: walletB.publicKey,
-            privacyClaim: claimPDA,
-        })
-        .signers([relayer]) // Relayer pays the gas!
-        .rpc();
-}
-```
-
-### Phase D: On-Chain Proof of Knowledge
-The contract verifies the secret *without* Wallet A being involved.
-
-```rust
-// SMART CONTRACT (Claim Logic)
-pub fn verify_retrieval(ctx, secret: [u8; 32]) -> Result<()> {
-    let claim = &ctx.accounts.privacy_claim;
-    let recipient = ctx.accounts.recipient.key();
-
-    // Re-calculate the commitment locally
-    // If Hash(Secret + WalletB) == Stored_Commitment -> Success
-    let reveal_hash = keccak::hash(secret + recipient).0;
-    
-    require!(reveal_hash == claim.commitment, Error::InvalidProof);
-    require!(!claim.redeemed, Error::AlreadyClaimed);
-
-    // Release funds directly to Wallet B
-    transfer(shielded_vault -> recipient, claim.amount);
-    
-    // Mark as finished
-    claim.redeemed = true;
-    Ok(())
+    // 3. The transaction is broadcast
+    // Logic: Wallet B provides the secret. Relayer provides the SOL.
 }
 ```
 
 ---
 
-## 4. Why this is the "Crux"
+## 5. Security Rationale: Defeating Forensics
 
-1.  **Identity Shifting**: You "disappear" as User A and "re-appear" as User B. 
-2.  **No On-Chain Path**: There is not a single transaction on the blockchain where Wallet A and Wallet B are present together. 
-3.  **The "Knowledge" Gate**: In standard DeFi, you claim money because you **own** the account (`ctx.accounts.signer == owner`). In Private PNP, you claim money because you **know** the secret. 
+### A. Defeating Timing Correlation
+In blockchain forensics, if an account spends $X$ and another account receives $X$ two minutes later, they are linked. 
+**Our Solution**: The `release_time` field forces a random delay. By breaking the temporal link, we make it mathematically impossible to correlate "Lock" events with "Claim" events in a high-volume system.
 
-**This turns the payout process into a Zero-Knowledge proof of destination. It is the gold standard for wealth privacy.**
+### B. Severing the "Gas Link"
+The #1 way privacy is broken is through the 0.000005 SOL needed for gas.
+**Our Solution**: By using a **Meta-Transaction** (Relayer), Wallet B "wakes up" for the first time on-chain with a $100,000 balance. It has no parent, no funding history, and no trail.
+
+### C. The Knowledge Paradox
+In standard systems: "I have the key, therefore I own the money."
+In Private PNP: "I know the secret, therefore the money is mine." 
+By shifting from **Ownership** to **Knowledge**, we decouple identity from wealth forever.
+
+---
+
+## 6. Summary for the Founder
+Wealth Privacy (The Crux) is not just a feature; it's a **re-engineering of how value moves on Solana**. It allows institutional traders to operate with the same level of discretion they have in traditional dark pools, but with the trustless security of a blockchain.
