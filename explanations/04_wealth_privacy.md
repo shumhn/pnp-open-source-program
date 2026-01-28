@@ -5,7 +5,21 @@ Wealth Privacy is the final and most difficult layer of the Private PNP protocol
 
 ---
 
-## 2. The Architecture of Anonymity
+## 2. In Simple Words: The Problem
+
+Imagine you win $10,000 in a prediction market. You want to move that money into a safe, fresh wallet that no one knows belongs to you.
+
+### Problem A: "The Payout Trail"
+On Solana (or any public blockchain), when a protocol sends you money, it's public. If everyone sees the project send $10,000 to your wallet, you are no longer private. Now, hackers or observers know exactly how much you won.
+
+### Problem B: "The Gas Trap"
+To use a brand new, empty wallet, you need a tiny bit of SOL (gas) to pay for transactions. If you send that SOL from your main wallet to your new wallet, you just created a **permanent link**. An observer can see that the SOL came from you, so they know the new wallet is also yours. **The privacy is broken before you even start.**
+
+**Wealth Privacy (The Crux) solves this by effectively "teleporting" your money from your trading wallet to a fresh bank wallet without even a single transaction connecting the two.**
+
+---
+
+## 3. The Architecture of Anonymity
 
 The core mechanism is a **Commitment-Reveal Handshake** that severs the on-chain link between the source of funds and the destination.
 
@@ -36,7 +50,7 @@ graph TD
 
 ---
 
-## 3. Cryptographic Deep-Dive
+## 4. Cryptographic Deep-Dive
 
 ### The Binding Commitment
 We use `Keccak256` to bind the funds to a specific recipient without revealing that recipient's address. 
@@ -50,7 +64,7 @@ By including the `Recipient_Address` inside the hash:
 
 ---
 
-## 4. Technical Implementation (Exhaustive Pseudo-Code)
+## 5. Technical Implementation (Exhaustive Pseudo-Code)
 
 ### Phase 1: The "Hush" (Identity Sealing)
 Wallet A initiates the transfer into the void.
@@ -126,7 +140,7 @@ async function anonymousRetrieval(walletB, relayer, secret, nonce) {
 
 ---
 
-## 5. Security Rationale: Defeating Forensics
+## 6. Security Rationale: Defeating Forensics
 
 ### A. Defeating Timing Correlation
 In blockchain forensics, if an account spends $X$ and another account receives $X$ two minutes later, they are linked. 
@@ -143,5 +157,5 @@ By shifting from **Ownership** to **Knowledge**, we decouple identity from wealt
 
 ---
 
-## 6. Summary for the Founder
+## 7. Summary for the Founder
 Wealth Privacy (The Crux) is not just a feature; it's a **re-engineering of how value moves on Solana**. It allows institutional traders to operate with the same level of discretion they have in traditional dark pools, but with the trustless security of a blockchain.
