@@ -18,35 +18,46 @@ Prediction markets are currently too transparent for institutional players. We s
 
 1.  **Alpha Leakage (Choice Privacy)**
     -   **Problem:** Every bet (YES/NO) is public, allowing bots to exploit your strategy.
-    -   **How it works:** **Confidential Execution**. We use Fully Homomorphic Encryption (FHE) to process choices as encrypted ciphertexts. The code computes market impact without ever "seeing" your direction.
+    -   **How it works:** **Confidential Execution**. We use Fully Homomorphic Encryption (FHE) to process choices. [**[Deep Dive: Choice Privacy]**](explanations/01_choice_privacy.md)
 
 2.  **Whale Surveillance (Identity Privacy)**
     -   **Problem:** Large account tracking allows the market to front-run whale movements.
-    -   **How it works:** **ZK-Compressed State**. We move user positions into a private Merkle Tree off-chain. Only a 32-byte root is stored on-chain, making your identity and balance invisible.
+    -   **How it works:** **ZK-Compressed State**. We move user positions into a private Merkle Tree off-chain. [**[Deep Dive: Identity Privacy]**](explanations/02_identity_privacy.md)
 
 3.  **MEV & Sandwich Attacks (Price Privacy)**
     -   **Problem:** Bots calculate slippage from public reserves to "sandwich" your trades.
-    -   **How it works:** **Encrypted Reserves**. Market odds (YES/NO supply) are stored in an encrypted state. Mathematical exploitation is impossible because the bot cannot solve for your slippage.
+    -   **How it works:** **Encrypted Reserves**. Market odds (YES/NO supply) are stored in an encrypted state. [**[Deep Dive: Price Privacy]**](explanations/03_price_privacy.md)
 
-4.  **Destination Tracking (Anonymity)**
-    -   **Problem:** Payouts to your trading wallet link all past transactions to your wealth.
-    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. You trade with Wallet A, but claim winnings to a completely fresh Wallet B using a one-time secret.
+4.  **Destination Tracking (Wealth Privacy)**
+    -   **Problem:** Payouts to your trading wallet link all past transactions to your net worth.
+    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. [**[Deep Dive: Wealth Privacy (The Crux)]**](explanations/04_wealth_privacy.md)
 
 5.  **Regulatory Friction (Selective Compliance)**
     -   **Problem:** Total "Black Boxes" are non-compliant for institutional reporting.
-    -   **How it works:** **Auditor View Keys**. We implement selective disclosure. You can provide a specific key to an auditor to verify your trades without leaking data to the public.
+    -   **How it works:** **Auditor View Keys**. We implement selective disclosure via specialized keys. [**[Deep Dive: Selective Compliance]**](explanations/05_selective_compliance.md)
 
 6.  **Solana Stack Limit (Technical Scaling)**
     -   **Problem:** Sophisticated privacy math exceeds Solana's 4KB stack memory.
-    -   **How it works:** **Modular Instruction Piping**. We break the complex logic into an atomic multi-stage pipeline, ensuring high performance without hitting blockchain limits.
+    -   **How it works:** **Modular Instruction Piping**. We break complex logic into multi-stage pipelines. [**[Deep Dive: Technical Scaling]**](explanations/06_technical_scaling.md)
 
 7.  **Gas-Leak Identity (Traceability)**
     -   **Problem:** Funding a wallet for gas links your identity across the network.
-    -   **How it works:** **Meta-Transactions**. We support relayer-signatures. A third party covers your gas fees so your anonymous wallet stays isolated.
+    -   **How it works:** **Meta-Transactions**. Third-party relayers cover gas so your wallet remains isolated. [**[Deep Dive: Traceability]**](explanations/07_traceability.md)
 
 8.  **AMM Instability (Economic Logic)**
     -   **Problem:** Low liquidity leads to unrealistic price distortion in standard models.
-    -   **How it works:** **Pythagorean AMM ($R = \sqrt{X^2 + Y^2}$)**. We use a probability-normalized curve that maintains stable odds and reflects true event probability.
+    -   **How it works:** **Pythagorean AMM**. A probability-normalized curve for stable odds. [**[Deep Dive: Economic Logic]**](explanations/08_economic_logic.md)
+
+---
+
+## 💎 The Privacy Crux: Destination Wallet Retrieval
+
+The "Crux" mentioned by the Founder is the **Privacy Firewall**. It solves the problem of "Wealth Doxing" by ensuring your Trade Wallet and your Payout Wallet never appear in the same transaction.
+
+### The 3-Phase Handshake
+1.  **The Lock (Wallet A)**: Trader A wins and locks funds into a **Shielded Vault** using a `Keccak256` commitment hash. The destination (Wallet B) is hidden inside this hash.
+2.  **The Blind State**: The funds sit in an ownerless PDA. To a bot, this looks like a mystery vault with no traceable owner.
+3.  **The Retrieval (Wallet B)**: A completely fresh wallet (Wallet B) provides the secret. The **Relayer** pays the gas, and the funds are released. **Link Broken.**
 
 ---
 
