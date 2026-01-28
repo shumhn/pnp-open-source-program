@@ -28,9 +28,9 @@ Prediction markets are currently too transparent for institutional players. We s
     -   **Problem:** Bots calculate slippage from public reserves to "sandwich" your trades.
     -   **How it works:** **Encrypted Reserves**. Market odds (YES/NO supply) are stored in an encrypted state. [**[Deep Dive: Price Privacy]**](explanations/03_price_privacy.md)
 
-4.  **Destination Tracking (Wealth Privacy)**
+4.  **Destination Tracking (Payout Confidentiality)**
     -   **Problem:** Payouts to your trading wallet link all past transactions to your net worth.
-    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. [**[Deep Dive: Wealth Privacy (The Crux)]**](explanations/04_wealth_privacy.md)
+    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. [**[Deep Dive: Payout Confidentiality (The Crux)]**](explanations/04_payout_confidentiality.md)
 
 5.  **Regulatory Friction (Selective Compliance)**
     -   **Problem:** Total "Black Boxes" are non-compliant for institutional reporting.
@@ -52,7 +52,7 @@ Prediction markets are currently too transparent for institutional players. We s
 
 ## 💎 The Privacy Crux: Destination Wallet Retrieval
 
-The "Crux" mentioned by the Founder is the **Privacy Firewall**. It solves the problem of "Wealth Doxing" by ensuring your Trade Wallet and your Payout Wallet never appear in the same transaction.
+The "Crux" mentioned by the Founder is the **Privacy Firewall**. It solves the problem of **Balance Exposure** by ensuring your Trade Wallet and your Payout Wallet never appear in the same transaction.
 
 ### The 3-Phase Handshake
 1.  **The Lock (Wallet A)**: Trader A wins and locks funds into a **Shielded Vault** using a `Keccak256` commitment hash. The destination (Wallet B) is hidden inside this hash.
