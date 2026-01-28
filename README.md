@@ -13,7 +13,42 @@ Open-source permissionless prediction markets on Solana with privacy.
 
 ---
 
+## The Wall of Problems: Why Private PNP Matters
+Prediction markets are currently too transparent for institutional players. We solve eight fundamental barriers by modularizing the privacy stack.
 
+1.  **Alpha Leakage (Choice Privacy)**
+    -   **Problem:** Every bet (YES/NO) is public, allowing bots to exploit your strategy.
+    -   **How it works:** **Confidential Execution**. We use Fully Homomorphic Encryption (FHE) to process choices. [**[Deep Dive: Choice Privacy]**](explanations/01_choice_privacy.md)
+
+2.  **Whale Surveillance (Identity Privacy)**
+    -   **Problem:** Large account tracking allows the market to front-run whale movements.
+    -   **How it works:** **ZK-Compressed State**. We move user positions into a private Merkle Tree off-chain. [**[Deep Dive: Identity Privacy]**](explanations/02_identity_privacy.md)
+
+3.  **MEV & Sandwich Attacks (Price Privacy)**
+    -   **Problem:** Bots calculate slippage from public reserves to "sandwich" your trades.
+    -   **How it works:** **Encrypted Reserves**. Market odds (YES/NO supply) are stored in an encrypted state. [**[Deep Dive: Price Privacy]**](explanations/03_price_privacy.md)
+
+4.  **Destination Tracking (Payout Confidentiality)**
+    -   **Problem:** Payouts to your trading wallet link all past transactions to your net worth.
+    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. [**[Deep Dive: Payout Confidentiality (The Crux)]**](explanations/04_payout_confidentiality.md)
+
+5.  **Regulatory Friction (Selective Compliance)**
+    -   **Problem:** Total "Black Boxes" are non-compliant for institutional reporting.
+    -   **How it works:** **Auditor View Keys**. We implement selective disclosure via specialized keys. [**[Deep Dive: Selective Compliance]**](explanations/05_selective_compliance.md)
+
+6.  **Solana Stack Limit (Technical Scaling)**
+    -   **Problem:** Sophisticated privacy math exceeds Solana's 4KB stack memory.
+    -   **How it works:** **Modular Instruction Piping**. We break complex logic into multi-stage pipelines. [**[Deep Dive: Technical Scaling]**](explanations/06_technical_scaling.md)
+
+7.  **Gas-Leak Identity (Traceability)**
+    -   **Problem:** Funding a wallet for gas links your identity across the network.
+    -   **How it works:** **Meta-Transactions**. Third-party relayers cover gas so your wallet remains isolated. [**[Deep Dive: Traceability]**](explanations/07_traceability.md)
+
+8.  **AMM Instability (Economic Logic)**
+    -   **Problem:** Low liquidity leads to unrealistic price distortion in standard models.
+    -   **How it works:** **Pythagorean AMM**. A probability-normalized curve for stable odds. [**[Deep Dive: Economic Logic]**](explanations/08_economic_logic.md)
+
+---
 
 
 ## Technical Architecture
@@ -152,43 +187,6 @@ We run a rigorous localnet simulation for every deployment. **All 16 institution
 
   16 passing (1m)
 ```
-
----
-
-## The Wall of Problems: Why Private PNP Matters
-Prediction markets are currently too transparent for institutional players. We solve eight fundamental barriers by modularizing the privacy stack.
-
-1.  **Alpha Leakage (Choice Privacy)**
-    -   **Problem:** Every bet (YES/NO) is public, allowing bots to exploit your strategy.
-    -   **How it works:** **Confidential Execution**. We use Fully Homomorphic Encryption (FHE) to process choices. [**[Deep Dive: Choice Privacy]**](explanations/01_choice_privacy.md)
-
-2.  **Whale Surveillance (Identity Privacy)**
-    -   **Problem:** Large account tracking allows the market to front-run whale movements.
-    -   **How it works:** **ZK-Compressed State**. We move user positions into a private Merkle Tree off-chain. [**[Deep Dive: Identity Privacy]**](explanations/02_identity_privacy.md)
-
-3.  **MEV & Sandwich Attacks (Price Privacy)**
-    -   **Problem:** Bots calculate slippage from public reserves to "sandwich" your trades.
-    -   **How it works:** **Encrypted Reserves**. Market odds (YES/NO supply) are stored in an encrypted state. [**[Deep Dive: Price Privacy]**](explanations/03_price_privacy.md)
-
-4.  **Destination Tracking (Payout Confidentiality)**
-    -   **Problem:** Payouts to your trading wallet link all past transactions to your net worth.
-    -   **How it works:** **Shielded Vaults**. We use a commitment-reveal scheme. [**[Deep Dive: Payout Confidentiality (The Crux)]**](explanations/04_payout_confidentiality.md)
-
-5.  **Regulatory Friction (Selective Compliance)**
-    -   **Problem:** Total "Black Boxes" are non-compliant for institutional reporting.
-    -   **How it works:** **Auditor View Keys**. We implement selective disclosure via specialized keys. [**[Deep Dive: Selective Compliance]**](explanations/05_selective_compliance.md)
-
-6.  **Solana Stack Limit (Technical Scaling)**
-    -   **Problem:** Sophisticated privacy math exceeds Solana's 4KB stack memory.
-    -   **How it works:** **Modular Instruction Piping**. We break complex logic into multi-stage pipelines. [**[Deep Dive: Technical Scaling]**](explanations/06_technical_scaling.md)
-
-7.  **Gas-Leak Identity (Traceability)**
-    -   **Problem:** Funding a wallet for gas links your identity across the network.
-    -   **How it works:** **Meta-Transactions**. Third-party relayers cover gas so your wallet remains isolated. [**[Deep Dive: Traceability]**](explanations/07_traceability.md)
-
-8.  **AMM Instability (Economic Logic)**
-    -   **Problem:** Low liquidity leads to unrealistic price distortion in standard models.
-    -   **How it works:** **Pythagorean AMM**. A probability-normalized curve for stable odds. [**[Deep Dive: Economic Logic]**](explanations/08_economic_logic.md)
 
 ---
 
