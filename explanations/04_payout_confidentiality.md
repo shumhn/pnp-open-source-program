@@ -157,5 +157,5 @@ By shifting from **Ownership** to **Knowledge**, we decouple identity from wealt
 
 ---
 
-## 7. Summary for the Founder
-Payout Confidentiality (The Crux) is not just a feature; it's a **re-engineering of how value moves on Solana**. It allows institutional traders to operate with the same level of discretion they have in traditional dark pools, but with the trustless security of a blockchain.
+## 7. Summary 
+Payout Confidentiality  is not just a feature; it's a **re-engineering of how value moves on Solana**. It allows institutional traders to operate with the same level of discretion they have in traditional dark pools, but with the trustless security of a blockchain.
