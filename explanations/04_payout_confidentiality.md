@@ -140,20 +140,19 @@ async function anonymousRetrieval(walletB, relayer, secret, nonce) {
 
 ---
 
-## 6. Security Rationale: Defeating Forensics
+## 6. How We Beat the Sleuths (Simple Explanation)
 
-### A. Defeating Timing Correlation
-In blockchain forensics, if an account spends $X$ and another account receives $X$ two minutes later, they are linked. 
-**Our Solution**: The `release_time` field forces a random delay. By breaking the temporal link, we make it mathematically impossible to correlate "Lock" events with "Claim" events in a high-volume system.
+### A. Hiding the Timing
+On a normal blockchain, if you move $10,000 out and a new wallet gets $10,000 one minute later, people can guess they are the same person.
+**Our Solution**: Imagine a "Time Delay" box. We hold the money for a random amount of time (like 6 hours). Because there is no "instant" transfer, it's impossible to guess which payout belongs to which win.
 
-### B. Severing the "Gas Link"
-The #1 way privacy is broken is through the 0.000005 SOL needed for gas.
-**Our Solution**: By using a **Meta-Transaction** (Relayer), Wallet B "wakes up" for the first time on-chain with a $100,000 balance. It has no parent, no funding history, and no trail.
+### B. Breaking the Gas Connection
+To use a new wallet, you usually need a tiny bit of SOL for gas. If you send that SOL from your old wallet, you leave a trail.
+**Our Solution**: We use a **Relayer**. Think of it like a "Gas Sponsor." The Relayer pays the tiny fee for you, and the protocol pays them back from your winnings. Your new wallet never touches your old wallet. **The trail is gone.**
 
-### C. The Knowledge Paradox
-In standard systems: "I have the key, therefore I own the money."
-In Private PNP: "I know the secret, therefore the money is mine." 
-By shifting from **Ownership** to **Knowledge**, we decouple identity from wealth forever.
+### C. Proof of Knowledge, Not Identity
+In most apps, you get paid because you are "Logged In" with your address.
+**Our Solution**: In Private PNP, you get paid because you **know the secret code**. It doesn't matter who you are or what wallet you use. If you have the code, you can unlock the money. This completely separates **who you are** from **what you own**.
 
 ---
 
