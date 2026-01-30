@@ -5,11 +5,18 @@ Open-source permissionless prediction markets on Solana with privacy.
 ---
 
 ## Deployment Status
-- **Network**: Solana Devnet
-- **Program ID**: [`8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn`](https://explorer.solana.com/address/8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn?cluster=devnet)
-- **Config PDA**: [`3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ`](https://explorer.solana.com/address/3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ?cluster=devnet)
-- **Verification**: [**16/16 Institutional Proofs Passing**](tests/privacy_darkpool.ts)
-- **Infrastructure**: Powered by **Helius** and **Confidential Execution**.
+| | |
+|:---|:---|
+| **Network** | Solana Devnet |
+| **Program ID** | [`8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn`](https://explorer.solana.com/address/8NeEkxgPMV5AnZ8o5ksjPhqsHwkWXdvGCGyHmEt6tJTn?cluster=devnet) |
+| **Config PDA** | [`3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ`](https://explorer.solana.com/address/3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ?cluster=devnet) |
+| **Verification** | [**16/16 Institutional Proofs Passed**](tests/privacy_darkpool.ts) |
+
+### RPC Infrastructure
+This project is powered by **[QuickNode](https://www.quicknode.com/)** for institutional-grade reliability.
+
+> [!TIP]
+> **QuickNode Public Benefit Integration**: We use QuickNode's high-performance Solana Devnet RPC to run our 16-proof privacy verification suite without connection drops. Configuration is in [`Anchor.toml`](Anchor.toml). See the [Quick Start](#quick-start) to run verification.
 
 ---
 
@@ -130,16 +137,18 @@ anchor test
 ### Verification (Devnet)
 Scale the proofs to the live Solana cluster.
 
-1. **Setup RPC**: For maximum stability, use a dedicated RPC like **Helius** (Optional).
-   > [!CAUTION]
-   > The public `api.devnet.solana.com` often drops connections during the full 16-test suite (~9 mins). For institutional verification, Helius or QuickNode is highly recommended.
+1. **Setup RPC**: For maximum stability and to qualify for the **QuickNode Public Benefit Prize**, use a dedicated RPC.
+   > [!TIP]
+   > **QuickNode Integration**: Sign up for a free endpoint at [QuickNode.com](https://www.quicknode.com/).
+   > Set it in `Anchor.toml` or export: `export ANCHOR_PROVIDER_URL=https://your-endpoint.solana-devnet.quiknode.pro/...`
+   
 2. **Run Tests**: Use the optimized shortcut:
    ```bash
    npm run test:devnet
    ```
 
-> [!TIP]
-> The suite now includes **Visual Progress Indicators** and **Smart Polling** (via `waitForExpiry`) to stay perfectly synced with the blockchain.
+> [!NOTE]
+> The suite now includes **Visual Progress Indicators** and **Smart Polling** (via `waitForExpiry`) to stay perfectly synced with the blockchain using high-performance RPCs like QuickNode.
 
 ---
 
