@@ -15,5 +15,14 @@ url = "https://api.apr.dev"
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
+# =============================================================================
+# QuickNode Integration - Stable RPC for Institutional Privacy Verification
+# Run: npm run test:devnet
+# =============================================================================
+[provider.devnet]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+rpc = "https://methodical-misty-wildflower.solana-devnet.quiknode.pro/34efb08250149c58d85841f6889b42b1229e22d7/"
+
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
