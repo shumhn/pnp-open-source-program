@@ -1,6 +1,6 @@
 # Private PNP
 
-**Open-source privacy layer for prediction markets on Solana.** FHE-encrypted choices, ZK-hidden wallets, shielded reserves, and untraceable payouts—all in one modular stack.
+**Open-source privacy layer for permissionless prediction markets on Solana.** FHE-encrypted choices, ZK-hidden wallets, shielded reserves, and untraceable payouts—all in one modular stack.
 
 ---
 
