@@ -137,10 +137,11 @@ anchor test
 ### Verification (Devnet)
 Scale the proofs to the live Solana cluster.
 
-1. **Setup RPC**: For maximum stability during complex privacy proofs, use a dedicated RPC.
-   > [!TIP]
-   > **QuickNode Integration**: Sign up for a free endpoint at [QuickNode.com](https://www.quicknode.com/).
-   > Set it in `Anchor.toml` or export: `export ANCHOR_PROVIDER_URL=https://your-endpoint.solana-devnet.quiknode.pro/...`
+1. **Setup QuickNode RPC**:
+   Set your Devnet endpoint in `Anchor.toml` or export it:
+   ```bash
+   export ANCHOR_PROVIDER_URL=https://your-endpoint.solana-devnet.quiknode.pro/...
+   ```
    
 2. **Run Tests**: Use the optimized shortcut:
    ```bash
