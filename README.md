@@ -16,7 +16,7 @@ Open-source permissionless prediction markets on Solana with privacy.
 This project is powered by **[QuickNode](https://www.quicknode.com/)** for institutional-grade reliability.
 
 > [!TIP]
-> **QuickNode Public Benefit Integration**: We use QuickNode's high-performance Solana Devnet RPC to run our 16-proof privacy verification suite without connection drops. Configuration is in [`Anchor.toml`](Anchor.toml). See the [Quick Start](#quick-start) to run verification.
+> **QuickNode Integration**: We use QuickNode's high-performance Solana Devnet RPC to run our 16-proof privacy verification suite without connection drops. Configuration is in [`Anchor.toml`](Anchor.toml). See the [Quick Start](#quick-start) to run verification.
 
 ---
 
@@ -137,7 +137,7 @@ anchor test
 ### Verification (Devnet)
 Scale the proofs to the live Solana cluster.
 
-1. **Setup RPC**: For maximum stability and to qualify for the **QuickNode Public Benefit Prize**, use a dedicated RPC.
+1. **Setup RPC**: For maximum stability during complex privacy proofs, use a dedicated RPC.
    > [!TIP]
    > **QuickNode Integration**: Sign up for a free endpoint at [QuickNode.com](https://www.quicknode.com/).
    > Set it in `Anchor.toml` or export: `export ANCHOR_PROVIDER_URL=https://your-endpoint.solana-devnet.quiknode.pro/...`
