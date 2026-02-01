@@ -13,6 +13,8 @@
 | **Verification** | [**16/16 Institutional Proofs Passed**](tests/privacy_darkpool.ts) |
 
 ## Demo Video
+[**Watch the Project Demo on Loom**](https://www.loom.com/share/395fc79e555143b685159513bed789ea)
+
 [![Project Demo](https://cdn.loom.com/sessions/thumbnails/395fc79e555143b685159513bed789ea-with-play.gif)](https://www.loom.com/share/395fc79e555143b685159513bed789ea)
 
 ### RPC Infrastructure
