@@ -12,6 +12,9 @@
 | **Config PDA** | [`3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ`](https://explorer.solana.com/address/3YNzwcQKUzAkhe4QsUW25tkoNUCLEUo1ACx9L7MNyMxQ?cluster=devnet) |
 | **Verification** | [**16/16 Institutional Proofs Passed**](tests/privacy_darkpool.ts) |
 
+## Demo Video
+[![Project Demo](https://cdn.loom.com/sessions/thumbnails/395fc79e555143b685159513bed789ea-with-play.gif)](https://www.loom.com/share/395fc79e555143b685159513bed789ea)
+
 ### RPC Infrastructure
 This project is powered by **[QuickNode](https://www.quicknode.com/)** for institutional-grade reliability.
 
